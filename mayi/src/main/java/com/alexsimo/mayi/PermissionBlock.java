@@ -9,7 +9,7 @@ public class PermissionBlock {
   private final PermissionsHelper helper;
   private Context context;
   private String[] permissions;
-  private boolean onUIThread;
+  private boolean onUiThread;
   private Runnable onPermissionsGranted;
   private Runnable onPermissionsDenied;
   private boolean doNotPrompt;
@@ -24,8 +24,8 @@ public class PermissionBlock {
     return this;
   }
 
-  public PermissionBlock onUIThread() {
-    this.onUIThread = true;
+  public PermissionBlock onUiThread() {
+    this.onUiThread = true;
     return this;
   }
 
@@ -81,7 +81,7 @@ public class PermissionBlock {
       return;
     }
 
-    if (onUIThread) {
+    if (onUiThread) {
       ThreadUtils.postToUiThread(runnable);
     } else {
       runnable.run();
