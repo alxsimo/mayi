@@ -103,7 +103,6 @@ public class Mayi {
   public static synchronized void onRequestPermissionsResult(@NonNull Activity activity,
       @NonNull String[] permissions, @NonNull int[] grantResults) {
     processGrantResults(permissions, grantResults);
-
     processQueue(activity, permissions, grantResults);
   }
 
@@ -192,7 +191,6 @@ public class Mayi {
         return false;
       }
     }
-
     return true;
   }
 
