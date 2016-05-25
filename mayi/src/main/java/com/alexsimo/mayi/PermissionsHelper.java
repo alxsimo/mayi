@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat;
 
 public class PermissionsHelper {
 
-  private static final int PERMISSIONS_REQUEST_CODE = 1337;
+  private static final int PERMISSIONS_REQUEST_CODE = 212;
 
   public boolean hasPermissions(Context context, String... permissions) {
     for (String permission : permissions) {
