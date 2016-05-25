@@ -18,7 +18,7 @@ import java.util.concurrent.FutureTask;
  *
  * Example:
  *
- * Permissions.from(activity)
+ * Mayi.from(activity)
  * .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
  * .onUiThread()
  * .andFallback(onPermissionDenied())
@@ -32,10 +32,9 @@ import java.util.concurrent.FutureTask;
  * then all callbacks
  * will be run on the UI thread.
  */
-public class Permissions {
+public class Mayi {
   private static final Queue<PermissionBlock> waiting = new LinkedList<>();
   private static final Queue<PermissionBlock> prompt = new LinkedList<>();
-
   private static PermissionsHelper permissionHelper = new PermissionsHelper();
 
   /**
@@ -60,15 +59,12 @@ public class Permissions {
   public static boolean waitFor(@NonNull Activity activity, String... permissions) {
     ThreadUtils.assertNotOnUiThread();
 
-    // This task will block until all of the permissions have been granted
     final FutureTask<Boolean> blockingTask = new FutureTask<>(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
         return true;
       }
     });
-
-    // This runnable will cancel the task if any of the permissions have been denied
     Runnable cancelBlockingTask = new Runnable() {
       @Override
       public void run() {
@@ -76,7 +72,7 @@ public class Permissions {
       }
     };
 
-    Permissions.from(activity)
+    Mayi.from(activity)
         .withPermissions(permissions)
         .andFallback(cancelBlockingTask)
         .run(blockingTask);
@@ -96,7 +92,7 @@ public class Permissions {
   }
 
   static void setPermissionHelper(PermissionsHelper permissionHelper) {
-    Permissions.permissionHelper = permissionHelper;
+    Mayi.permissionHelper = permissionHelper;
   }
 
   /**

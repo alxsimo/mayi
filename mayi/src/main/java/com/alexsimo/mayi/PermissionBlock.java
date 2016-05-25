@@ -41,12 +41,19 @@ public class PermissionBlock {
     return this;
   }
 
+  public PermissionBlock needExplanation() {
+    if (permissions == null) {
+      throw new IllegalStateException("First need to define permissions");
+    }
+    return helper.needRationale(context, permissions);
+  }
+
   public void run() {
     run(null);
   }
 
   public void run(Runnable onPermissionsGranted) {
-    if (!doNotPrompt && !(context instanceof Activity)) {
+    if (!doNotPrompt && !contextIsActivity()) {
       throw new IllegalStateException(
           "You need to either specify doNotPrompt() or pass in an Activity context");
     }
@@ -58,9 +65,13 @@ public class PermissionBlock {
     } else if (doNotPrompt) {
       onPermissionsDenied();
     } else {
-      Permissions.prompt((Activity) context, this);
+      Mayi.prompt((Activity) context, this);
     }
     context = null;
+  }
+
+  private boolean contextIsActivity() {
+    return context instanceof Activity;
   }
 
   public PermissionBlock andFallback(@NonNull Runnable onPermissionsDenied) {

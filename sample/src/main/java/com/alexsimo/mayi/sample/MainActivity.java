@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import com.alexsimo.mayi.Permissions;
+import com.alexsimo.mayi.Mayi;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,13 +29,14 @@ public class MainActivity extends AppCompatActivity {
 
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    Permissions.onRequestPermissionsResult(this, permissions, grantResults);
+    Mayi.onRequestPermissionsResult(this, permissions, grantResults);
   }
 
   private void requestPermissions() {
-    Permissions.from(this)
+    Mayi.from(this)
         .withPermissions(Manifest.permission.READ_CONTACTS,
             Manifest.permission.ACCESS_FINE_LOCATION)
+        .needExplanation()
         .onUiThread()
         .andFallback(onPermissionDenied())
         .run(onPermissionGranted());
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
   private Runnable onPermissionGranted() {
     return new Runnable() {
       public void run() {
-        Log.d(TAG, "Permissions granted");
+        Log.d(TAG, "Mayi granted");
       }
     };
   }

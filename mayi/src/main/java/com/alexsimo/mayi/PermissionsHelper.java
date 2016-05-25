@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat;
 
 public class PermissionsHelper {
 
-  private static final int PERMISSIONS_REQUEST_CODE = 212;
+  private static final int PERMISSIONS_REQUEST_CODE = 1337;
 
   public boolean hasPermissions(Context context, String... permissions) {
     for (String permission : permissions) {
@@ -22,5 +22,14 @@ public class PermissionsHelper {
 
   public void prompt(Activity activity, String[] permissions) {
     ActivityCompat.requestPermissions(activity, permissions, PERMISSIONS_REQUEST_CODE);
+  }
+
+  public boolean needRationale(Context context, String[] permissions) {
+    for (String permission : permissions) {
+      if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, permission)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
