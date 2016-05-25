@@ -41,7 +41,7 @@ public class PermissionBlock {
     return this;
   }
 
-  public PermissionBlock needExplanation() {
+  public boolean needExplanation() {
     if (permissions == null) {
       throw new IllegalStateException("First need to define permissions");
     }

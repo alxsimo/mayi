@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     Mayi.from(this)
         .withPermissions(Manifest.permission.READ_CONTACTS,
             Manifest.permission.ACCESS_FINE_LOCATION)
-        .needExplanation()
         .onUiThread()
         .andFallback(onPermissionDenied())
         .run(onPermissionGranted());
