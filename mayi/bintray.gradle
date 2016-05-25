@@ -1,0 +1,56 @@
+def versionPropsFile = file('version.properties')
+if (versionPropsFile.canRead()) {
+  def Properties versionProps = new Properties()
+  versionProps.load(new FileInputStream(versionPropsFile))
+  def versionName = versionProps['VERSION_NAME'].toString()
+  def versionCode = versionProps['VERSION_CODE'].toString()
+  project.ext.versionName = versionProps['VERSION_NAME'].toString()
+  project.ext.versionCode = versionProps['VERSION_CODE'].toString()
+} else {
+  throw new GradleException("Could not read version.properties!")
+}
+group = 'com.alexsimo.mayi'
+version = versionName + '.' + versionCode
+
+task generateSourcesJar(type: Jar) {
+  from android.sourceSets.main.java.srcDirs
+  classifier 'sources'
+}
+
+task generateJavaDocs(type: Javadoc) {
+  source = android.sourceSets.main.java.srcDirs
+  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task generateJavaDocsJar(type: Jar) {
+  from generateJavaDocs.destinationDir
+  classifier 'javadoc'
+}
+generateJavaDocsJar.dependsOn generateJavaDocs
+
+bintray {
+  user = hasProperty('BINTRAY_USER') ? getProperty('BINTRAY_USER') : System.getenv('BINTRAY_USER')
+  key = hasProperty('BINTRAY_KEY') ? getProperty('BINTRAY_KEY') : System.getenv('BINTRAY_KEY')
+
+  pkg {
+    repo = 'maven'
+    name = 'com.alexsimo.mayi'
+
+    version {
+      name = project.versionName + '.' + project.versionCode
+      desc = 'Simple library to handle permission request on Android'
+      released = new Date()
+      vcsTag = versionName
+    }
+
+    licenses = ['Apache-2.0']
+    vcsUrl = 'https://github.com/alexsimo/mayi.git'
+    websiteUrl = 'https://github.com/alexsimo/mayi'
+  }
+  configurations = ['archives']
+}
+
+artifacts {
+  archives generateJavaDocsJar
+  archives generateSourcesJar
+}
