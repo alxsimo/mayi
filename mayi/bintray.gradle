@@ -11,46 +11,87 @@ if (versionPropsFile.canRead()) {
 }
 group = 'com.alexsimo.mayi'
 version = versionName + '.' + versionCode
+def artifactId = 'mayi'
+def siteUrl = 'https://github.com/alexsimo/mayi'
+def gitUrl = 'https://github.com/alexsimo/mayi.git'
+def projectName = 'Mayi'
+def projectDescription = 'Mayi - Simple library for handlig runtime permissions on Android'
 
-task generateSourcesJar(type: Jar) {
+task sourcesJar(type: Jar) {
   from android.sourceSets.main.java.srcDirs
-  classifier 'sources'
+  classifier = 'sources'
 }
 
-task generateJavaDocs(type: Javadoc) {
+task javadoc(type: Javadoc) {
   source = android.sourceSets.main.java.srcDirs
   classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
-task generateJavaDocsJar(type: Jar) {
-  from generateJavaDocs.destinationDir
-  classifier 'javadoc'
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
-generateJavaDocsJar.dependsOn generateJavaDocs
+artifacts {
+  archives javadocJar
+  archives sourcesJar
+}
+
+install {
+  repositories.mavenInstaller {
+    pom {
+      project {
+        packaging 'aar'
+
+        name = projectName
+        description = projectDescription
+        url = siteUrl
+
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            id 'alexsimo'
+            name 'Alexandru V. Simonescu'
+            email 'alexandru.simonescu@gmail.com'
+          }
+        }
+        scm {
+          connection gitUrl
+          developerConnection gitUrl
+          url siteUrl
+        }
+      }
+    }
+  }
+}
 
 bintray {
   user = hasProperty('BINTRAY_USER') ? getProperty('BINTRAY_USER') : System.getenv('BINTRAY_USER')
   key = hasProperty('BINTRAY_KEY') ? getProperty('BINTRAY_KEY') : System.getenv('BINTRAY_KEY')
 
-  pkg {
-    repo = 'maven'
-    name = 'com.alexsimo.mayi'
-
-    version {
-      name = project.versionName + '.' + project.versionCode
-      desc = 'Simple library to handle permission request on Android'
-      released = new Date()
-      vcsTag = versionName
-    }
-
-    licenses = ['Apache-2.0']
-    vcsUrl = 'https://github.com/alexsimo/mayi.git'
-    websiteUrl = 'https://github.com/alexsimo/mayi'
-  }
   configurations = ['archives']
-}
-
-artifacts {
-  archives generateJavaDocsJar
-  archives generateSourcesJar
+  pkg {
+    repo = "maven"
+    name = artifactId
+    websiteUrl = siteUrl
+    vcsUrl = gitUrl
+    licenses = ["Apache-2.0"]
+    publish = true
+    version {
+      gpg {
+        sign = true
+        passphrase = ""
+      }
+//      mavenCentralSync {
+//        sync = true
+//        user = hasProperty('OSS_USER') ? getProperty('OSS_USER') : System.getenv('OSS_USER')
+//        password = hasProperty('OSS_KEY') ? getProperty('OSS_KEY') : System.getenv('OSS_KEY')
+//        close = '1'
+//      }
+    }
+  }
 }
