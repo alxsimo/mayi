@@ -41,6 +41,14 @@ public class MainActivity extends AppCompatActivity {
         .run(onPermissionGranted());
   }
 
+  private Runnable onPermissionGranted() {
+    return () -> Log.d(TAG, "Mayi granted");
+  }
+
+  private Runnable onPermissionDenied() {
+    return () -> Log.d(TAG, "Permissions DENIED");
+  }
+
   private void requestPermissionsInline() {
     Mayi.from(this)
         .withPermissions(Manifest.permission.READ_CONTACTS,
@@ -48,13 +56,5 @@ public class MainActivity extends AppCompatActivity {
         .onUiThread()
         .andFallback(() -> Log.d(TAG, "Nooo!"))
         .run(() -> Log.d(TAG, "Yeees!"));
-  }
-
-  private Runnable onPermissionGranted() {
-    return () -> Log.d(TAG, "Mayi granted");
-  }
-
-  private Runnable onPermissionDenied() {
-    return () -> Log.d(TAG, "Permissions DENIED");
   }
 }
